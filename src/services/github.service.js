@@ -38,3 +38,20 @@ export async function fetchRootFilenames(repoUrl) {
 
   return response.data.map((item) => item.name);
 }
+
+
+export async function fetchFileContent(repoUrl, filePath) {
+  const { owner, repo } = parseGitHubRepoUrl(repoUrl);
+
+  const response = await axios.get(
+    `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`,
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+        Accept: 'application/vnd.github+json',
+      },
+    }
+  );
+
+  return Buffer.from(response.data.content, 'base64').toString('utf-8');
+}
