@@ -10,6 +10,13 @@ export function parseDependencies(fileContent) {
 
 export async function fetchMetadata(packageName) {
   const response = await axios.get(`https://registry.npmjs.org/${packageName}/latest`);
-  const deps = Object.keys(response.data.dependencies || {}).map(name => ({ name, version: 'latest' }));
-  return { name: packageName, latestVersion: response.data.version, dependencies: deps };
+  const deps = Object.entries(response.data.dependencies || {}).map(([name, version]) => ({
+    name,
+    version: response.data.version  // ← use ACTUAL resolved version, not "latest"
+  }));
+  return { 
+    name: packageName, 
+    latestVersion: response.data.version, 
+    dependencies: deps 
+  };
 }
